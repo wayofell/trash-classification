@@ -216,3 +216,46 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+### -   -   -   -   ###
+
+# ML / Deep Learning
+*.h5
+*.keras
+*.pt
+*.pth
+*.ckpt
+*.tflite
+*.onnx
+
+# Datasets
+data/
+!data/sample/
+!data/sample/.gitkeep
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Experiments
+experiments/logs/*
+!experiments/logs/.gitkeep
+experiments/plots/*.png
+!experiments/plots/.gitkeep
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+
+# Conda / Python
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Kaggle
+kaggle.json
