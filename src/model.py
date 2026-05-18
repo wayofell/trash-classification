@@ -134,6 +134,33 @@ def build_resnet50_transfer(
     return model
 
 
+def unfreeze_last_block(model: keras.Model, block_name: str = "conv5_block3") -> int:
+    """
+    Unfreeze the last block of ResNet50 base for fine-tuning.
+
+    Walks through layers of the inner 'resnet50_base' submodel and sets
+    layer.trainable = True for layers whose name contains block_name.
+    BatchNorm layers within the block are kept frozen to preserve
+    ImageNet running statistics.
+
+    Returns the number of layers unfrozen.
+    """
+    base = model.get_layer("resnet50_base")
+    base.trainable = True  # required at outer level
+
+    unfrozen = 0
+    for layer in base.layers:
+        if block_name in layer.name and not isinstance(
+                layer, layers.BatchNormalization
+        ):
+            layer.trainable = True
+            unfrozen += 1
+        else:
+            layer.trainable = False
+
+    return unfrozen
+
+
 # ---------------------------------------------------------------------------
 # Smoke test
 # ---------------------------------------------------------------------------
@@ -149,4 +176,12 @@ if __name__ == "__main__":
         keras.backend.count_params(w) for w in resnet.trainable_weights
     )
     print(f"Total parameters: {resnet.count_params():,}")
-    print(f"Trainable parameters: {trainable:,}")
+    print(f"Trainable parameters (frozen): {trainable:,}")
+
+    print("\n=== ResNet50 Transfer (after unfreezing last block) ===")
+    n_unfrozen = unfreeze_last_block(resnet)
+    trainable_ft = sum(
+        keras.backend.count_params(w) for w in resnet.trainable_weights
+    )
+    print(f"Layers unfrozen: {n_unfrozen}")
+    print(f"Trainable parameters (fine-tune): {trainable_ft:,}")
