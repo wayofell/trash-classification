@@ -84,10 +84,69 @@ def build_baseline_cnn(
 
 
 # ---------------------------------------------------------------------------
+# ResNet50 Transfer Learning
+# ---------------------------------------------------------------------------
+
+def build_resnet50_transfer(
+        num_classes: int = NUM_CLASSES,
+        input_shape: tuple = (*IMG_SIZE, 3),
+        dropout_rate: float = 0.3,
+        trainable_base: bool = False,
+        name: str = "resnet50_transfer",
+) -> keras.Model:
+    """
+    ResNet50 pre-trained on ImageNet with a custom classifier head.
+
+    Args:
+        trainable_base: if False (default), ResNet50 weights are frozen.
+                        Set to True for fine-tuning.
+
+    The model includes ImageNet-style preprocessing:
+        input pixels in [0, 255] -> ResNet preprocessing (BGR + ImageNet mean)
+    """
+    inputs = keras.Input(shape=input_shape, name="input")
+
+    # ResNet expects BGR images with ImageNet mean subtracted, in [0, 255] range.
+    # We use the official preprocessing layer to match training conditions.
+    x = keras.applications.resnet50.preprocess_input(inputs)
+
+    # Load ResNet50 with ImageNet weights, no top (no classifier)
+    base = keras.applications.ResNet50(
+        include_top=False,
+        weights="imagenet",
+        input_shape=input_shape,
+        pooling=None,
+        name="resnet50_base",
+    )
+    base.trainable = trainable_base
+
+    # Important: keep BatchNorm layers in inference mode even if base is unfrozen.
+    # Otherwise BN stats would update on the small new dataset and break the
+    # pre-trained features.
+    x = base(x, training=False)
+
+    # Classifier head
+    x = layers.GlobalAveragePooling2D(name="gap")(x)
+    x = layers.Dropout(dropout_rate, name="dropout")(x)
+    outputs = layers.Dense(num_classes, name="logits")(x)
+
+    model = keras.Model(inputs=inputs, outputs=outputs, name=name)
+    return model
+
+
+# ---------------------------------------------------------------------------
 # Smoke test
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    model = build_baseline_cnn()
-    model.summary()
-    print(f"\nTotal parameters: {model.count_params():,}")
+    print("=== Baseline CNN ===")
+    baseline = build_baseline_cnn()
+    print(f"Total parameters: {baseline.count_params():,}\n")
+
+    print("=== ResNet50 Transfer (frozen) ===")
+    resnet = build_resnet50_transfer(trainable_base=False)
+    trainable = sum(
+        keras.backend.count_params(w) for w in resnet.trainable_weights
+    )
+    print(f"Total parameters: {resnet.count_params():,}")
+    print(f"Trainable parameters: {trainable:,}")
