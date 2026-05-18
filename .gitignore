@@ -239,8 +239,8 @@ data/
 # Experiments
 experiments/logs/*
 !experiments/logs/.gitkeep
-experiments/plots/*.png
-!experiments/plots/.gitkeep
+#experiments/plots/*.png
+#!experiments/plots/.gitkeep
 
 # IDE
 .idea/
