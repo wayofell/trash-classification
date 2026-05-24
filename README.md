@@ -92,3 +92,9 @@ Kaggle (P100 GPU)
 ## Author
 
 Farukh Kharov
+
+## License
+
+Code is released under the MIT License (see [LICENSE](LICENSE)).
+The dataset is subject to its own license — see the
+[original Kaggle page](https://www.kaggle.com/datasets/sumn2u/garbage-classification-v2).
