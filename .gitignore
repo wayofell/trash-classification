@@ -228,17 +228,10 @@ __marimo__/
 *.tflite
 *.onnx
 
-# Datasets
-data/
-!data/sample/
-!data/sample/.gitkeep
-
 # Notebooks
 .ipynb_checkpoints/
 
 # Experiments
-experiments/logs/*
-!experiments/logs/.gitkeep
 #experiments/plots/*.png
 #!experiments/plots/.gitkeep
 
