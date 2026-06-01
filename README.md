@@ -91,7 +91,7 @@ Kaggle (P100 GPU)
 
 ## Author
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=2500&pause=500&color=FF8C00&vCenter=true&width=435&lines=Farukh+Kharov;Kharov+Farukh)](https://git.io/typing-svg)
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&duration=2500&pause=500&color=FF8C00&vCenter=true&width=435&lines=Farukh+Kharov;Kharov+Farukh)](https://github.com/wayofell)
 
 ## License
 
